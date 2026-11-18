@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es" data-tema="claro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio de autómatas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%234f46e5'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='white' stroke-width='6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/estatico/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="marca"><span class="logo">⬡</span><span>Laboratorio de autómatas</span></div>
+  <nav class="pestanas" role="tablist">
+    <button class="pestana activa" data-vista="finitos" role="tab">Finitos</button>
+    <button class="pestana" data-vista="traductores" role="tab">Traductores</button>
+    <button class="pestana" data-vista="pila" role="tab">Pila</button>
+    <button class="pestana" data-vista="turing" role="tab">Turing</button>
+  </nav>
+  <label class="interruptor" title="Cambiar entre tema claro y oscuro">
+    <input type="checkbox" id="tema"><span class="pista"><span class="perilla"></span></span><span>Oscuro</span>
+  </label>
+</header>
+
+<main id="vista-finitos" class="vista activa">
+  <div class="rejilla">
+    <section class="col-izq">
+      <article class="tarjeta" id="tarjeta-tipo">
+        <h2><span class="num">1</span>Tipo de autómata</h2>
+        <div class="segmentos" id="segmentos-tipo">
+          <button class="segmento activo" data-modo="AFD"><strong>AFD</strong><small>Un destino por símbolo</small></button>
+          <button class="segmento" data-modo="AFND"><strong>AFND</strong><small>Varios destinos posibles</small></button>
+          <button class="segmento" data-modo="AFND-LAMBDA"><strong>AFND-λ</strong><small>Con transiciones λ</small></button>
+          <button class="segmento" data-modo="ER"><strong>Expresión regular</strong><small>Se construye con Thompson</small></button>
+        </div>
+      </article>
+
+      <article class="tarjeta" id="tarjeta-definicion">
+        <h2><span class="num">2</span>Definición</h2>
+        <div class="herramientas">
+          <select id="ejemplos" aria-label="Cargar un ejemplo"><option value="">Cargar un ejemplo…</option></select>
+          <button class="secundario" id="btn-abrir" title="Abrir un autómata guardado (.json)">Abrir</button>
+          <button class="secundario" id="btn-guardar" title="Guardar el autómata creado (.json)">Guardar</button>
+          <input type="file" id="archivo" accept="application/json,.json" hidden>
+        </div>
+
+        <div id="panel-tabla">
+          <div class="fila-alfabeto">
+            <span class="etiqueta">Alfabeto Σ</span>
+            <div class="chips" id="chips-alfabeto"></div>
+            <input id="nuevo-simbolo" maxlength="12" placeholder="a, b, 0…" aria-label="Símbolos nuevos">
+            <button class="secundario" id="btn-simbolo">＋ Símbolo</button>
+          </div>
+          <div class="tabla-scroll"><table class="matriz" id="matriz"></table></div>
+          <div class="pie-editor">
+            <button class="secundario" id="btn-estado">＋ Estado</button>
+            <button class="texto" id="btn-limpiar">Limpiar tabla</button>
+            <span class="ayuda" id="ayuda-celdas"></span>
+          </div>
+        </div>
+
+        <div id="panel-er" hidden>
+          <label class="etiqueta" for="er-texto">Expresión regular</label>
+          <input id="er-texto" class="er-entrada" spellcheck="false" autocomplete="off" placeholder="por ejemplo: (a|b)*abb">
+          <div class="atajos" id="atajos-er">
+            <button data-ins="λ" title="Cadena vacía">λ</button><button data-ins="∅" title="Lenguaje vacío">∅</button>
+            <button data-ins="|" title="Unión">|</button><button data-ins="*" title="Estrella de Kleene">*</button>
+            <button data-ins="+" title="Cierre positivo">+</button><button data-ins="()" title="Paréntesis">( )</button>
+          </div>
+          <label class="etiqueta" for="er-extra">Símbolos extra del alfabeto <small>(opcional)</small></label>
+          <input id="er-extra" maxlength="20" placeholder="símbolos que no aparecen en la expresión" autocomplete="off">
+          <p class="ayuda">Unión <code>a|b</code> · concatenación <code>ab</code> · estrella <code>a*</code> · cierre positivo <code>a+</code> · vacía <code>λ</code>. Para usar un carácter especial como símbolo, antepón <code>\</code>.</p>
+        </div>
+
+        <div id="mensajes" class="mensajes" aria-live="polite"></div>
+        <button class="primario grande" id="btn-crear">Crear autómata</button>
+      </article>
+
+      <article class="tarjeta" id="tarjeta-operaciones" hidden>
+        <h2><span class="num">3</span>Operaciones</h2>
+        <div class="operaciones" id="lista-ops"></div>
+      </article>
+    </section>
+
+    <section class="col-der">
+      <article class="tarjeta" id="tarjeta-diagrama">
+        <header class="cab">
+          <h2 id="titulo-diagrama">Diagrama</h2>
+          <div class="acciones">
+            <button class="texto" id="btn-ajustar" title="Encoger o ampliar el dibujo para ver todo el autómata">Ajustar a la vista</button>
+            <button class="texto" id="btn-reorganizar" title="Volver a la distribución automática">Reorganizar</button>
+            <button class="texto" id="btn-svg" title="Descargar el dibujo actual como imagen SVG">Descargar SVG</button>
+          </div>
+        </header>
+        <div id="diagrama"></div>
+        <p class="ayuda">Arrastra los estados con el ratón para acomodarlos.</p>
+      </article>
+
+      <article class="tarjeta" id="tarjeta-simulacion" hidden></article>
+      <article class="tarjeta" id="tarjeta-pasos" hidden></article>
+    </section>
+  </div>
+</main>
+
+<main id="vista-traductores" class="vista"></main>
+<main id="vista-pila" class="vista"></main>
+<main id="vista-turing" class="vista"></main>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+<script type="module" src="/estatico/js/main.js"></script>
+</body>
+</html>

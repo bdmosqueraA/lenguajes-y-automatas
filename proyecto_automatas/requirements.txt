@@ -1,0 +1,2 @@
+# El programa no necesita paquetes externos: solo Python 3.9 o superior.
+# (Opcional, solo para las pruebas automáticas de navegador:  pip install playwright)
